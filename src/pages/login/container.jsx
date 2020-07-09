@@ -4,6 +4,24 @@ import Login from "./index";
 import ValidationUtils from "utils/validationUtils";
 import UI_STRINGS from "utils/stringConstants";
 
+import { connect } from "react-redux";
+import { each, get } from "lodash";
+//services
+import { userLoginhandler } from "./services";
+
+const mapStateToProps = state => {
+  console.log(state, "state");
+  const { RECEIVE_USER_FAILURE, RECEIVE_USER_SUCCESS, REQUEST_USER } = state;
+
+  return {
+    ...RECEIVE_USER_FAILURE,
+    ...RECEIVE_USER_SUCCESS,
+    ...REQUEST_USER
+  };
+};
+
+const mapDispatchToProps = { userLoginhandler };
+
 class LoginPage extends Component {
   state = {
     form: {
@@ -42,7 +60,36 @@ class LoginPage extends Component {
     return null;
   };
 
-  loginHandler = () => {};
+  /**
+   * check if form fields are valid or not
+   * @returns Boolean stating whether fields are valid or not
+   */
+  checkIfFieldsAreValid = () => {
+    let { form } = this.state;
+    let isFieldValid = true;
+
+    each(form, eachField => {
+      eachField.error = this.handleValidation(get(eachField, `value`));
+      if (eachField.error) {
+        isFieldValid = false;
+      }
+    });
+
+    this.setState({
+      form
+    });
+
+    return isFieldValid;
+  };
+
+  loginHandler = () => {
+    if (!this.checkIfFieldsAreValid()) return;
+    const { form } = this.state;
+    const email = get(form, `email.value`);
+    const password = get(form, `password.value`);
+
+    this.props.userLoginhandler(email, password);
+  };
 
   handleInputChange = (e, fieldIndex) => {
     let error = this.handleValidation(e.target.value);
@@ -68,4 +115,4 @@ class LoginPage extends Component {
   }
 }
 
-export default LoginPage;
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);

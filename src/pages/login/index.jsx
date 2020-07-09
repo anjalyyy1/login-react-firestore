@@ -8,12 +8,14 @@ import { NavLink } from "react-router-dom";
 import InputField from "components/inputfield";
 import Button from "components/button";
 import BackgroundWrapper from "components/backgroundWrapper";
+import FullPageLoader from "components/fullPageLoader";
 
 const Login = props => {
-  let { form, handleInputChange, loginHandler } = props;
-
+  let { form, handleInputChange, loginHandler, isUserLoading } = props;
+  console.log(isUserLoading, "isUserLoading");
   return (
     <PageWrapper>
+      {isUserLoading && <FullPageLoader />}
       Login
       <FormWrapper>
         {map(form, (eachField, index) => {
@@ -23,7 +25,7 @@ const Login = props => {
                 fieldKey={index}
                 label={get(eachField, `label`)}
                 value={get(eachField, `value`)}
-                width="50%"
+                width="100%"
                 error={get(eachField, `error`)}
                 handleInputChange={e => handleInputChange(e, index)}
                 type={get(eachField, `type`)}
@@ -33,9 +35,9 @@ const Login = props => {
           );
         })}
         <Button label="Login" onClickHandler={loginHandler} width="50%" />
-        <span>
+        <SignupLink>
           Not registered? <NavLink to="/signup">Create an account.</NavLink>
-        </span>
+        </SignupLink>
       </FormWrapper>
     </PageWrapper>
   );
@@ -43,7 +45,13 @@ const Login = props => {
 
 const InputWrapper = styled.div``;
 
-const PageWrapper = styled.div``;
+const SignupLink = styled.div``;
+
+const PageWrapper = styled.div`
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+`;
 
 const FormWrapper = styled.div``;
 

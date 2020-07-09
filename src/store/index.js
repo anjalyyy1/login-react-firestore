@@ -9,14 +9,48 @@ import reducers from "./reducers";
 //   storage,
 //   whitelist: ["LAST_LOGGED_IN_TOOL"]
 // };
-
-const reducerList = combineReducers(reducers);
 // const persistedReducer = persistReducer(persistConfig, reducerList);
 
-let store = createStore(reducerList, applyMiddleware(thunk));
+import { compose } from "redux";
+import {
+  reduxFirestore,
+  getFirestore,
+  createFirestoreInstance
+} from "redux-firestore";
+import { getFirebase } from "react-redux-firebase";
+import firebase from "firebase/app";
+import firebaseConfig from "config/firebaseConfig";
+import {} from "redux-firestore";
+const rrfConfig = {
+  userProfile: "users",
+  useFirestoreForProfile: true, //include if using firestore
+  attachAuthIsReady: true //include if using firebase auth
+};
+const reducerList = combineReducers(reducers);
+
+let store = createStore(
+  reducerList,
+  compose(
+    applyMiddleware(
+      thunk.withExtraArgument({
+        getFirebase,
+        getFirestore
+      })
+    ),
+    reduxFirestore(firebaseConfig)
+    // reactReduxFirebase(firebaseConfig)
+  )
+);
+
+const rrfProps = {
+  firebase,
+  config: rrfConfig,
+  dispatch: store.dispatch,
+  createFirestoreInstance
+};
 
 // let persistor = persistStore(store);
 export default function configureStore() {
   return store;
 }
-export { store };
+export { store, rrfProps };

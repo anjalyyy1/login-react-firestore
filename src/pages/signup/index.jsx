@@ -12,7 +12,7 @@ const Signup = props => {
   let { form, handleInputChange } = props;
 
   return (
-    <div>
+    <PageWrapper>
       Sign up
       {map(form, (eachField, index) => {
         return (
@@ -21,7 +21,7 @@ const Signup = props => {
               fieldKey={index}
               label={get(eachField, `label`)}
               value={get(eachField, `value`)}
-              width="50%"
+              width="100%"
               error={get(eachField, `error`)}
               handleInputChange={e => handleInputChange(e, index)}
               type={get(eachField, `type`)}
@@ -31,17 +31,23 @@ const Signup = props => {
         );
       })}
       <Button label="Sign up" width="50%" />
-      <span>
+      <LoginLink>
         Already have an account?
         <NavLink to="/">Login to your account</NavLink>
-      </span>
-    </div>
+      </LoginLink>
+    </PageWrapper>
   );
 };
 
+const LoginLink = styled.div``;
+
 const InputWrapper = styled.div``;
 
-const PageWrapper = styled.div``;
+const PageWrapper = styled.div`
+  width: 50%;
+  margin: 0 auto;
+  text-align: center;
+`;
 
 const FormWrapper = styled.div``;
 
