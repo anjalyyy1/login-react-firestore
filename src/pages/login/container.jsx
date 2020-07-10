@@ -10,7 +10,6 @@ import { each, get } from "lodash";
 import { userLoginhandler } from "./services";
 
 const mapStateToProps = state => {
-  console.log(state, "state");
   const { RECEIVE_USER_FAILURE, RECEIVE_USER_SUCCESS, REQUEST_USER } = state;
 
   return {
@@ -41,8 +40,6 @@ class LoginPage extends Component {
       }
     }
   };
-
-  componentDidMount() {}
 
   /**
    *handle validation for form fields
@@ -82,13 +79,20 @@ class LoginPage extends Component {
     return isFieldValid;
   };
 
-  loginHandler = () => {
+  loginHandler = async () => {
     if (!this.checkIfFieldsAreValid()) return;
     const { form } = this.state;
     const email = get(form, `email.value`);
     const password = get(form, `password.value`);
 
-    this.props.userLoginhandler(email, password);
+    await this.props.userLoginhandler(email, password);
+    const { userProfileDetails } = this.props;
+
+    if (userProfileDetails) {
+      console.log(this.props, "are the props");
+
+      this.props.history.push("/profile");
+    }
   };
 
   handleInputChange = (e, fieldIndex) => {

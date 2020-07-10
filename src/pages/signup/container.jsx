@@ -1,8 +1,27 @@
 import React, { Component } from "react";
 import Signup from "./index";
+import { get, each } from "lodash";
 
 import ValidationUtils from "utils/validationUtils";
 import UI_STRINGS from "utils/stringConstants";
+import { connect } from "react-redux";
+import { userSignupHandler } from "./services";
+
+const mapStateToProps = state => {
+  const {
+    RECEIVE_SIGNUP_FAILURE,
+    RECEIVE_SIGNUP_SUCCESS,
+    REQUEST_USER
+  } = state;
+
+  return {
+    ...RECEIVE_SIGNUP_FAILURE,
+    ...RECEIVE_SIGNUP_SUCCESS,
+    ...REQUEST_USER
+  };
+};
+
+const mapDispatchToProps = { userSignupHandler };
 
 class SignupPage extends Component {
   state = {
@@ -67,14 +86,12 @@ class SignupPage extends Component {
       profilePicture: {
         value: "",
         error: "",
-        label: "Phone Number",
+        label: "Profile Picture",
         type: "text",
         fieldType: "input"
       }
     }
   };
-
-  componentDidMount() {}
 
   /**
    *handle validation for form fields
@@ -92,7 +109,46 @@ class SignupPage extends Component {
     return null;
   };
 
-  loginHandler = () => {};
+  /**
+   * check if form fields are valid or not
+   * @returns Boolean stating whether fields are valid or not
+   */
+  checkIfFieldsAreValid = () => {
+    let { form } = this.state;
+    let isFieldValid = true;
+
+    each(form, eachField => {
+      eachField.error = this.handleValidation(get(eachField, `value`));
+      if (eachField.error) {
+        isFieldValid = false;
+      }
+    });
+
+    this.setState({
+      form
+    });
+
+    return isFieldValid;
+  };
+
+  signupHandler = async () => {
+    if (!this.checkIfFieldsAreValid()) return;
+    const { form } = this.state;
+
+    const postData = {
+      email: get(form, `email.value`),
+      password: get(form, `password.value`),
+      firstName: get(form, `firstName.value`),
+      lastName: get(form, `lastName.value`),
+      age: get(form, `age.value`),
+      phoneNumber: get(form, `phoneNumber.value`),
+      address: get(form, `address.value`)
+    };
+
+    await this.props.userSignupHandler(postData);
+
+    console.log(this.props.userDetails, "userDetails");
+  };
 
   handleInputChange = (e, fieldIndex) => {
     let error = this.handleValidation(e.target.value);
@@ -118,4 +174,4 @@ class SignupPage extends Component {
   }
 }
 
-export default SignupPage;
+export default connect(mapStateToProps, mapDispatchToProps)(SignupPage);

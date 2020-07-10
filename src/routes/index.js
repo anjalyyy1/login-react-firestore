@@ -5,10 +5,12 @@ import {
   Switch,
   Redirect
 } from "react-router-dom";
+// import history from "../history";
 
 //components
 import Login from "pages/login/container";
 import Signup from "pages/signup/container";
+import Profile from "pages/profile";
 
 const routes = () => {
   return (
@@ -16,6 +18,7 @@ const routes = () => {
       <Switch>
         <Route path="/" exact component={Login} />
         <Route path="/signup" exact component={Signup} />
+        <Route path="/profile" exact component={Profile} />
         <Redirect to="/" />
       </Switch>
     </Router>

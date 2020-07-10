@@ -9,7 +9,7 @@ import Button from "components/button";
 import BackgroundWrapper from "components/backgroundWrapper";
 
 const Signup = props => {
-  let { form, handleInputChange } = props;
+  let { form, handleInputChange, signupHandler } = props;
 
   return (
     <PageWrapper>
@@ -30,7 +30,7 @@ const Signup = props => {
           </InputWrapper>
         );
       })}
-      <Button label="Sign up" width="50%" />
+      <Button label="Sign up" width="50%" onClickHandler={signupHandler} />
       <LoginLink>
         Already have an account?
         <NavLink to="/">Login to your account</NavLink>

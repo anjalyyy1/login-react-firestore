@@ -12,7 +12,7 @@ import FullPageLoader from "components/fullPageLoader";
 
 const Login = props => {
   let { form, handleInputChange, loginHandler, isUserLoading } = props;
-  console.log(isUserLoading, "isUserLoading");
+
   return (
     <PageWrapper>
       {isUserLoading && <FullPageLoader />}

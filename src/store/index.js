@@ -20,9 +20,9 @@ import {
 import { getFirebase } from "react-redux-firebase";
 import firebase from "firebase/app";
 import firebaseConfig from "config/firebaseConfig";
-import {} from "redux-firestore";
+
 const rrfConfig = {
-  userProfile: "users",
+  // userProfile: "users",
   useFirestoreForProfile: true, //include if using firestore
   attachAuthIsReady: true //include if using firebase auth
 };
@@ -38,7 +38,6 @@ let store = createStore(
       })
     ),
     reduxFirestore(firebaseConfig)
-    // reactReduxFirebase(firebaseConfig)
   )
 );
 
