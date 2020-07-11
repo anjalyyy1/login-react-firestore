@@ -13,13 +13,17 @@ import UI_STRINGS from "utils/stringConstants";
 import { userLoginhandler } from "./services";
 
 const mapStateToProps = state => {
+  console.log(state, "poora store");
   const { RECEIVE_USER_FAILURE, RECEIVE_USER_SUCCESS, REQUEST_USER } = state;
-  return {
-    ...state.firebase,
+
+  let test = {
     ...RECEIVE_USER_FAILURE,
     ...RECEIVE_USER_SUCCESS,
     ...REQUEST_USER
   };
+
+  console.log(test, "tets test");
+  return test;
 };
 
 const mapDispatchToProps = { userLoginhandler };
@@ -43,6 +47,12 @@ class LoginPage extends Component {
       }
     }
   };
+
+  componentDidMount() {
+    if (localStorage.getItem("isUserLoggedIn")) {
+      this.props.history.push("/profile");
+    }
+  }
 
   /**
    *handle validation for form fields
@@ -88,8 +98,11 @@ class LoginPage extends Component {
 
     await this.props.userLoginhandler(email, password);
     const { userProfileDetails } = this.props;
+    console.log(this.props, "this are the props");
 
     if (userProfileDetails) {
+      console.log("setting flag");
+      localStorage.setItem("isUserLoggedIn", true);
       this.props.history.push("/profile");
     }
   };

@@ -11,6 +11,7 @@ export const onUserLoginSuccess = (
   payload = null,
   type = types.RECEIVE_USER_SUCCESS
 ) => {
+  console.log(payload, "payload");
   return {
     type,
     payload

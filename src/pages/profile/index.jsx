@@ -8,16 +8,6 @@ import Button from "components/button";
 import BackgroundWrapper from "components/backgroundWrapper";
 import ImageUpload from "components/imageUpload";
 
-// address: "4234234"
-// age: "4234"
-// email: "anny123@gmail.com"
-// firstName: "Anjali"
-// isEmpty: false
-// isLoaded: true
-// lastName: "Gupta"
-// phoneNumber: "43242"
-// profilePicture:"https://firebasestorage.googleapis.com/v0/b/login-react-firestore.appspot.com/o/images%2Fegg-cress-club-sandwich_0.jpg?alt=media&token=a00e162a-dbb1-4294-8413-68bc3a78eddc"
-
 const Profile = props => {
   let {
     form,
@@ -27,7 +17,6 @@ const Profile = props => {
     onSignout
   } = props;
 
-  console.log(props);
   return (
     <PageWrapper>
       {map(form, (eachField, index) => {

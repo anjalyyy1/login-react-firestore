@@ -27,10 +27,19 @@ const mapDispatchToProps = { userSignupHandler };
 
 class SignupPage extends Component {
   state = {
+    hideTopMargin: true,
     form: {
+      profilePicture: {
+        value: "",
+        error: "",
+        label: "Profile Picture",
+        type: "text",
+        fieldType: "image"
+      },
       firstName: {
         value: "",
         error: "",
+        className: "halfWidth",
         label: "First Name",
         type: "text",
         fieldType: "input"
@@ -38,6 +47,7 @@ class SignupPage extends Component {
       lastName: {
         value: "",
         error: "",
+        className: "halfWidth marginLeft",
         label: "Last Name",
         fieldType: "input",
         type: "text",
@@ -53,6 +63,7 @@ class SignupPage extends Component {
       password: {
         value: "",
         error: "",
+        className: "halfWidth",
         label: "Password",
         fieldType: "input",
         type: "password"
@@ -61,6 +72,7 @@ class SignupPage extends Component {
         value: "",
         error: "",
         label: "Confirm Password",
+        className: "halfWidth marginLeft",
         fieldType: "input",
         type: "password"
       },
@@ -68,12 +80,14 @@ class SignupPage extends Component {
         value: "",
         error: "",
         label: "Age",
+        className: "halfWidth",
         type: "text",
         fieldType: "input"
       },
       phoneNumber: {
         value: "",
         error: "",
+        className: "halfWidth marginLeft",
         label: "Phone Number",
         type: "text",
         fieldType: "input"
@@ -84,29 +98,24 @@ class SignupPage extends Component {
         label: "Address",
         type: "text",
         fieldType: "textarea"
-      },
-      profilePicture: {
-        value: "",
-        error: "",
-        label: "Profile Picture",
-        type: "text",
-        fieldType: "image"
       }
     }
   };
 
-  // componentDidMount() {
-  //   if (get(this.props, `profile`)) {
-  //     this.props.history.push("/profile ");
-  //   }
-  // }
+  componentDidMount() {
+    if (localStorage.getItem("isUserLoggedIn")) {
+      this.props.history.push("/profile");
+    }
+  }
 
   /**
    *handle validation for form fields
    * @returns {String} appropriate error message
    */
-  handleValidation = (value, fieldType) => {
-    return;
+  handleValidation = (value, fieldType, field) => {
+    const { form } = this.state;
+
+    console.log(fieldType, "fieldType");
     if (ValidationUtils.checkIfEmptyField(value)) {
       return UI_STRINGS.EMPTY_FIELD_ERROR_MESSAGE;
     } else if (
@@ -115,10 +124,23 @@ class SignupPage extends Component {
     ) {
       return UI_STRINGS.WHITE_SPACE_ERROR_MESSAGE;
     } else if (
-      ValidationUtils.checkIfspecialChar(value) &&
+      get(field, `label`) === "Phone Number" &&
+      !ValidationUtils.validateContactNumber(value) &&
       fieldType !== "image"
     ) {
-      return UI_STRINGS.SPECIAL_CHAR_ERROR_MESSAGE;
+      return UI_STRINGS.VALID_CONTACT_NUMBER;
+    } else if (
+      get(field, `label`) === "Age" &&
+      !ValidationUtils.validateNumber(value) &&
+      fieldType !== "image"
+    ) {
+      return UI_STRINGS.VALID_NUMBER;
+    } else if (
+      get(field, `label`) === "Confirm Password" &&
+      value !== get(form, `password.value`) &&
+      fieldType !== "image"
+    ) {
+      return UI_STRINGS.PASSWORD_CONFIRM_PASSWORD_MATCH_ERROR;
     }
 
     return null;
@@ -135,7 +157,8 @@ class SignupPage extends Component {
     each(form, eachField => {
       eachField.error = this.handleValidation(
         get(eachField, `value`),
-        get(eachField, `fieldType`)
+        get(eachField, `fieldType`),
+        eachField
       );
       if (eachField.error) {
         isFieldValid = false;
@@ -164,19 +187,21 @@ class SignupPage extends Component {
       profilePicture: get(form, `profilePicture.value`)
     };
 
-    await this.props.userSignupHandler(postData);
-    const { isUserSignedUp } = this.props;
-    console.log(isUserSignedUp, "ist the users");
-    if (isUserSignedUp) {
-      console.log("object");
-      this.props.history.push("/profile");
-    }
+    console.log(postData);
+
+    // await this.props.userSignupHandler(postData);
+    // const { isUserSignedUp } = this.props;
+    // console.log(isUserSignedUp, "ist the users");
+    // if (isUserSignedUp) {
+    //   console.log("object");
+    //   this.props.history.push("/profile");
+    // }
   };
 
-  handleInputChange = (e, fieldIndex, fieldType) => {
+  handleInputChange = (e, fieldIndex, fieldType, eachField) => {
     let error;
     if (fieldType !== "image") {
-      error = this.handleValidation(e.target.value, fieldType);
+      error = this.handleValidation(e.target.value, fieldType, eachField);
     }
 
     let { form } = this.state;

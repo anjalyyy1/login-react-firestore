@@ -3,6 +3,7 @@ import Profile from "./index";
 
 import ValidationUtils from "utils/validationUtils";
 import UI_STRINGS from "utils/stringConstants";
+import { getKeyByValue } from "utils/getKeyByValue";
 
 import { connect } from "react-redux";
 import { each, get, isEqual } from "lodash";
@@ -83,14 +84,10 @@ class ProfilePage extends Component {
     }
   }
 
-  getKeyByValue = (object, value) => {
-    return Object.keys(object).find(key => object[key] === value);
-  };
-
   setFormDetails = profileDetails => {
     const { form } = this.state;
     each(form, eachField => {
-      eachField["value"] = profileDetails[this.getKeyByValue(form, eachField)];
+      eachField["value"] = profileDetails[getKeyByValue(form, eachField)];
     });
 
     this.setState({
@@ -169,6 +166,7 @@ class ProfilePage extends Component {
 
   onSignout = async () => {
     await this.props.signoutUser();
+    localStorage.removeItem("isUserLoggedIn");
     this.props.history.push("/");
   };
 

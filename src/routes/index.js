@@ -5,7 +5,6 @@ import {
   Switch,
   Redirect
 } from "react-router-dom";
-// import history from "../history";
 import { connect } from "react-redux";
 
 //components
@@ -13,55 +12,28 @@ import Login from "pages/login/container";
 import Signup from "pages/signup/container";
 import Profile from "pages/profile/container";
 
-// check auth session and redirect if not authenticated
-const checkAuthSession = (
-  Component,
-  props,
-  auth,
-  defaultRouteName = "private"
-) => {
-  let checkIfUserLoggedIn = !auth.isEmpty; // user is logged in
-  console.log({ checkIfUserLoggedIn });
-  return checkIfUserLoggedIn ? (
-    <Profile {...props} />
-  ) : defaultRouteName !== "private" ? (
+const checkAuthSession = (Component, auth) => {
+  return localStorage.getItem("isUserLoggedIn") ? (
     Component
   ) : (
     <Redirect to="/" />
   );
 };
 
-const allProtectedRoutes = auth => [
-  <>
-    <Route
-      path="/profile"
-      exact
-      render={props => checkAuthSession(<Profile {...props} />, props, auth)}
-    />
-  </>
-];
-
 const routes = props => {
   let auth = props.auth;
+
   return (
     <Router>
       <Switch>
+        <Route path="/" exact component={Login} />
+        <Route path="/signup" exact component={Signup} />
         <Route
-          path="/"
+          path="/profile"
           exact
-          render={props =>
-            checkAuthSession(<Login {...props} />, props, auth, "login")
-          }
-        />
-        <Route
-          path="/signup"
-          exact
-          render={props =>
-            checkAuthSession(<Signup {...props} />, props, auth, "signup")
-          }
+          render={props => checkAuthSession(<Profile {...props} />, auth)}
         />
         <Redirect to="/" />
-        {allProtectedRoutes(auth)}
       </Switch>
     </Router>
   );

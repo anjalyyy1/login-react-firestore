@@ -3,11 +3,19 @@ import {
   ImageUploadWrapper,
   ImageInput,
   ImagePreview,
-  ImagePreviewWrapper
+  ImagePreviewWrapper,
+  DefaultImageWrapper,
+  DefaultImage,
+  EditImage,
+  ErrorMessage
 } from "./styles";
+import AppImages from "images";
+
+import ValidationUtils from "utils/validationUtils";
+import ToastUtils from "utils/handleToast";
 
 const ImageUpload = props => {
-  const { handleInputChange, fieldIndex, imageDetail } = props;
+  const { handleInputChange, fieldIndex, imageDetail, error } = props;
   const [imageFile, setImage] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(imageDetail);
 
@@ -20,6 +28,15 @@ const ImageUpload = props => {
 
     let reader = new FileReader();
     let file = e.target.files[0];
+
+    if (!ValidationUtils.validateImageFile(file)) {
+      ToastUtils.handleToast({
+        operation: "error",
+        message: "Please enter a valid file."
+      });
+      return;
+    }
+    // if (!file) return;
 
     reader.onloadend = () => {
       setImage(file);
@@ -39,9 +56,21 @@ const ImageUpload = props => {
           id="upload"
           onChange={handleImageChange}
         />
+
         <ImagePreviewWrapper>
-          <ImagePreview src={imagePreviewUrl} />
+          {imagePreviewUrl ? (
+            <ImagePreview src={imagePreviewUrl} />
+          ) : (
+            <DefaultImageWrapper>
+              <DefaultImage src={AppImages.SignUpUserImage} />
+            </DefaultImageWrapper>
+          )}
+          <EditImage
+            onClick={() => document.querySelector("#upload").click()}
+            src={AppImages.Edit}
+          />
         </ImagePreviewWrapper>
+        <ErrorMessage>{error}</ErrorMessage>
       </ImageUploadWrapper>
     </>
   );

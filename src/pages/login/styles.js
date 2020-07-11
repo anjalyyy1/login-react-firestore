@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 export const LoginImage = styled.img`
-  background: white;
+  background: ${props => props.theme.COLOR.WHITE};
   border-radius: 50%;
   display: inline-block;
 `;
