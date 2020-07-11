@@ -7,6 +7,8 @@ import {
   onUserSignupFailure
 } from "./actions";
 
+import { storage } from "config/firebaseConfig";
+
 // user login handler
 const userSignupHandler = newUser => async (
   dispatch,
@@ -22,39 +24,47 @@ const userSignupHandler = newUser => async (
     })
   );
 
-  console.log("i m from services");
-  firebase
-    .auth()
-    .createUserWithEmailAndPassword(newUser.email, newUser.password)
-    .then(response => {
-      const user = response.user;
+  try {
+    const response = await firebase
+      .auth()
+      .createUserWithEmailAndPassword(newUser.email, newUser.password);
 
-      let test = firestore.collection("users").doc(user.uid).set({
+    console.log(response, "response");
+    const uploadedImage = await storage
+      .ref(`/images/${newUser.profilePicture.name}`)
+      .put(newUser.profilePicture);
+
+    const imageUrl = await storage
+      .ref("images")
+      .child(uploadedImage.metadata.name)
+      .getDownloadURL();
+
+    const signedUpUser = await firestore
+      .collection("users")
+      .doc(response.user.uid)
+      .set({
         email: newUser.email,
         firstName: newUser.firstName,
         lastName: newUser.lastName,
         age: newUser.age,
         phoneNumber: newUser.phoneNumber,
-        address: newUser.address
+        address: newUser.address,
+        profilePicture: imageUrl
       });
-      console.log(test, "===");
-      return test;
-    })
-    .then(response => {
-      dispatch(
-        onUserSignupSuccess({
-          userDetails: response
-        })
-      );
-    })
-    .catch(err => {
-      console.log("object", err);
-      dispatch(
-        onUserSignupFailure({
-          signupError: err
-        })
-      );
-    });
+
+    dispatch(
+      onUserSignupSuccess({
+        userDetails: signedUpUser
+      })
+    );
+  } catch (err) {
+    dispatch(
+      onUserSignupFailure({
+        signupError: err
+      })
+    );
+  }
+
   dispatch(
     isUserLoading({
       isUserLoading: false
@@ -63,3 +73,13 @@ const userSignupHandler = newUser => async (
 };
 
 export { userSignupHandler };
+
+// const uploadTask = await firestorage
+//       .ref(`/images/${profileImage.name}`)
+//       .put(profileImage.value);
+
+//     imageUrl = await firestorage
+//       .ref("images")
+//       .child(uploadTask.metadata.name)
+//       .getDownloadURL();
+// storage.child(`images/${newUser.profilePicture.name}`).put(newUser.profilePicture.value)

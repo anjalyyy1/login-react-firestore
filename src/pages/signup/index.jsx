@@ -7,6 +7,7 @@ import { NavLink } from "react-router-dom";
 import InputField from "components/inputfield";
 import Button from "components/button";
 import BackgroundWrapper from "components/backgroundWrapper";
+import ImageUpload from "components/imageUpload";
 
 const Signup = props => {
   let { form, handleInputChange, signupHandler } = props;
@@ -15,20 +16,33 @@ const Signup = props => {
     <PageWrapper>
       Sign up
       {map(form, (eachField, index) => {
-        return (
-          <InputWrapper key={index}>
-            <InputField
-              fieldKey={index}
-              label={get(eachField, `label`)}
-              value={get(eachField, `value`)}
-              width="100%"
-              error={get(eachField, `error`)}
-              handleInputChange={e => handleInputChange(e, index)}
-              type={get(eachField, `type`)}
-              fieldType={get(eachField, `fieldType`)}
-            />
-          </InputWrapper>
+        const formField = (
+          <>
+            {get(eachField, `fieldType`) !== "image" ? (
+              <InputWrapper key={index}>
+                <InputField
+                  fieldKey={index}
+                  label={get(eachField, `label`)}
+                  value={get(eachField, `value`)}
+                  width="100%"
+                  error={get(eachField, `error`)}
+                  handleInputChange={e => handleInputChange(e, index)}
+                  type={get(eachField, `type`)}
+                  fieldType={get(eachField, `fieldType`)}
+                />
+              </InputWrapper>
+            ) : (
+              <>
+                <ImageUpload
+                  handleInputChange={handleInputChange}
+                  fieldIndex={index}
+                />
+              </>
+            )}
+          </>
         );
+
+        return formField;
       })}
       <Button label="Sign up" width="50%" onClickHandler={signupHandler} />
       <LoginLink>

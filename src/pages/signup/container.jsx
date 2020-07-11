@@ -88,7 +88,7 @@ class SignupPage extends Component {
         error: "",
         label: "Profile Picture",
         type: "text",
-        fieldType: "input"
+        fieldType: "image"
       }
     }
   };
@@ -97,12 +97,19 @@ class SignupPage extends Component {
    *handle validation for form fields
    * @returns {String} appropriate error message
    */
-  handleValidation = value => {
+  handleValidation = (value, fieldType) => {
+    return;
     if (ValidationUtils.checkIfEmptyField(value)) {
       return UI_STRINGS.EMPTY_FIELD_ERROR_MESSAGE;
-    } else if (ValidationUtils.checkIfWhiteSpace(value)) {
+    } else if (
+      ValidationUtils.checkIfWhiteSpace(value) &&
+      fieldType !== "image"
+    ) {
       return UI_STRINGS.WHITE_SPACE_ERROR_MESSAGE;
-    } else if (ValidationUtils.checkIfspecialChar(value)) {
+    } else if (
+      ValidationUtils.checkIfspecialChar(value) &&
+      fieldType !== "image"
+    ) {
       return UI_STRINGS.SPECIAL_CHAR_ERROR_MESSAGE;
     }
 
@@ -118,7 +125,10 @@ class SignupPage extends Component {
     let isFieldValid = true;
 
     each(form, eachField => {
-      eachField.error = this.handleValidation(get(eachField, `value`));
+      eachField.error = this.handleValidation(
+        get(eachField, `value`),
+        get(eachField, `fieldType`)
+      );
       if (eachField.error) {
         isFieldValid = false;
       }
@@ -142,19 +152,21 @@ class SignupPage extends Component {
       lastName: get(form, `lastName.value`),
       age: get(form, `age.value`),
       phoneNumber: get(form, `phoneNumber.value`),
-      address: get(form, `address.value`)
+      address: get(form, `address.value`),
+      profilePicture: get(form, `profilePicture.value`)
     };
 
     await this.props.userSignupHandler(postData);
-
-    console.log(this.props.userDetails, "userDetails");
   };
 
-  handleInputChange = (e, fieldIndex) => {
-    let error = this.handleValidation(e.target.value);
+  handleInputChange = (e, fieldIndex, fieldType) => {
+    let error;
+    if (fieldType !== "image") {
+      error = this.handleValidation(e.target.value, fieldType);
+    }
 
     let { form } = this.state;
-    form[fieldIndex].value = e.target.value;
+    form[fieldIndex].value = fieldType === "image" ? e : e.target.value;
     form[fieldIndex].error = error;
 
     this.setState({
