@@ -29,7 +29,6 @@ const userSignupHandler = newUser => async (
       .auth()
       .createUserWithEmailAndPassword(newUser.email, newUser.password);
 
-    console.log(response, "response");
     const uploadedImage = await storage
       .ref(`/images/${newUser.profilePicture.name}`)
       .put(newUser.profilePicture);
@@ -54,7 +53,7 @@ const userSignupHandler = newUser => async (
 
     dispatch(
       onUserSignupSuccess({
-        userDetails: signedUpUser
+        isUserSignedUp: true
       })
     );
   } catch (err) {

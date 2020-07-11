@@ -1,7 +1,6 @@
 // libraries
 import React from "react";
 import { map, get } from "lodash";
-import styled from "styled-components";
 import { NavLink } from "react-router-dom";
 
 // components
@@ -9,6 +8,16 @@ import InputField from "components/inputfield";
 import Button from "components/button";
 import BackgroundWrapper from "components/backgroundWrapper";
 import FullPageLoader from "components/fullPageLoader";
+import AppImages from "images";
+import {
+  LoginImage,
+  LoginImageWrapper,
+  InputWrapper,
+  SignupLink,
+  PageWrapper,
+  FormWrapper,
+  Heading
+} from "./styles.js";
 
 const Login = props => {
   let { form, handleInputChange, loginHandler, isUserLoading } = props;
@@ -16,7 +25,11 @@ const Login = props => {
   return (
     <PageWrapper>
       {isUserLoading && <FullPageLoader />}
-      Login
+      <LoginImageWrapper>
+        <LoginImage src={AppImages.LoginImage} />
+      </LoginImageWrapper>
+      <Heading>Welcome</Heading>
+
       <FormWrapper>
         {map(form, (eachField, index) => {
           return (
@@ -42,17 +55,5 @@ const Login = props => {
     </PageWrapper>
   );
 };
-
-const InputWrapper = styled.div``;
-
-const SignupLink = styled.div``;
-
-const PageWrapper = styled.div`
-  width: 50%;
-  margin: 0 auto;
-  text-align: center;
-`;
-
-const FormWrapper = styled.div``;
 
 export default BackgroundWrapper(Login);

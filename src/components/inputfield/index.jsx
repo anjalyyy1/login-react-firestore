@@ -54,6 +54,7 @@ const SharedLabelCss = css`
   display: block;
   text-align: left;
   font-size: 14px;
+  font-family: "Roboto", sans-serif;
 `;
 
 const Label = styled.label`
@@ -61,10 +62,11 @@ const Label = styled.label`
 `;
 
 const ErrorMessage = styled.span`
-  font-size: 10px;
+  font-size: 12px;
   position: absolute;
   margin-top: 5px;
   left: 0;
+  color: ${props => props.theme.COLOR.ERROR};
 `;
 
 const SharedInputCss = css`
@@ -73,8 +75,9 @@ const SharedInputCss = css`
   width: 100%;
   resize: none;
   border-radius: 4px;
-  font-size: 12px;
-  border: 1px solid red;
+  font-family: "Roboto", sans-serif;
+  font-size: 19px;
+  border: 1px solid ${props => props.theme.COLOR.GRAY};
 
   &:focus {
     outline: none;
@@ -95,7 +98,7 @@ const Input = styled.input`
 const FormGroup = styled.div`
   box-sizing: border-box;
   width: ${props => props.width || "100%"};
-  margin-bottom: 20px;
+  margin-bottom: 30px;
   position: relative;
 `;
 

@@ -1,32 +1,27 @@
 import React, { Component } from "react";
-import Signup from "./index";
-import { get, each, isEqual } from "lodash";
+import Profile from "./index";
 
 import ValidationUtils from "utils/validationUtils";
 import UI_STRINGS from "utils/stringConstants";
+
 import { connect } from "react-redux";
-import { userSignupHandler } from "./services";
+import { each, get, isEqual } from "lodash";
+//services
+import { updateUserDocument, signoutUser } from "./services";
 
 const mapStateToProps = state => {
-  const {
-    RECEIVE_SIGNUP_FAILURE,
-    RECEIVE_SIGNUP_SUCCESS,
-    REQUEST_USER,
-    firebase
-  } = state;
-
+  const { RECEIVE_SIGNUP_SUCCESS, firebase } = state;
   return {
     ...firebase,
-    ...RECEIVE_SIGNUP_FAILURE,
-    ...RECEIVE_SIGNUP_SUCCESS,
-    ...REQUEST_USER
+    ...RECEIVE_SIGNUP_SUCCESS
   };
 };
 
-const mapDispatchToProps = { userSignupHandler };
+const mapDispatchToProps = { updateUserDocument, signoutUser };
 
-class SignupPage extends Component {
+class ProfilePage extends Component {
   state = {
+    isProfileEdited: false,
     form: {
       firstName: {
         value: "",
@@ -42,27 +37,6 @@ class SignupPage extends Component {
         fieldType: "input",
         type: "text",
         fieldType: "input"
-      },
-      email: {
-        value: "",
-        error: "",
-        label: "Enter email",
-        type: "text",
-        fieldType: "input"
-      },
-      password: {
-        value: "",
-        error: "",
-        label: "Password",
-        fieldType: "input",
-        type: "password"
-      },
-      confirmPassword: {
-        value: "",
-        error: "",
-        label: "Confirm Password",
-        fieldType: "input",
-        type: "password"
       },
       age: {
         value: "",
@@ -95,29 +69,45 @@ class SignupPage extends Component {
     }
   };
 
-  // componentDidMount() {
-  //   if (get(this.props, `profile`)) {
-  //     this.props.history.push("/profile ");
-  //   }
-  // }
+  componentDidMount() {
+    const profile = get(this.props, `profile`);
+
+    if (get(this.props, `profile`)) {
+      this.setFormDetails(profile);
+    }
+  }
+
+  componentDidUpdate(prevProps) {
+    if (!isEqual(get(this.props, `profile`), get(prevProps, `profile`))) {
+      this.setFormDetails(get(this.props, `profile`));
+    }
+  }
+
+  getKeyByValue = (object, value) => {
+    return Object.keys(object).find(key => object[key] === value);
+  };
+
+  setFormDetails = profileDetails => {
+    const { form } = this.state;
+    each(form, eachField => {
+      eachField["value"] = profileDetails[this.getKeyByValue(form, eachField)];
+    });
+
+    this.setState({
+      form
+    });
+  };
 
   /**
    *handle validation for form fields
    * @returns {String} appropriate error message
    */
-  handleValidation = (value, fieldType) => {
-    return;
+  handleValidation = value => {
     if (ValidationUtils.checkIfEmptyField(value)) {
       return UI_STRINGS.EMPTY_FIELD_ERROR_MESSAGE;
-    } else if (
-      ValidationUtils.checkIfWhiteSpace(value) &&
-      fieldType !== "image"
-    ) {
+    } else if (ValidationUtils.checkIfWhiteSpace(value)) {
       return UI_STRINGS.WHITE_SPACE_ERROR_MESSAGE;
-    } else if (
-      ValidationUtils.checkIfspecialChar(value) &&
-      fieldType !== "image"
-    ) {
+    } else if (ValidationUtils.checkIfspecialChar(value)) {
       return UI_STRINGS.SPECIAL_CHAR_ERROR_MESSAGE;
     }
 
@@ -133,10 +123,7 @@ class SignupPage extends Component {
     let isFieldValid = true;
 
     each(form, eachField => {
-      eachField.error = this.handleValidation(
-        get(eachField, `value`),
-        get(eachField, `fieldType`)
-      );
+      eachField.error = this.handleValidation(get(eachField, `value`));
       if (eachField.error) {
         isFieldValid = false;
       }
@@ -149,13 +136,13 @@ class SignupPage extends Component {
     return isFieldValid;
   };
 
-  signupHandler = async () => {
-    if (!this.checkIfFieldsAreValid()) return;
-    const { form } = this.state;
+  updateProfileHandler = async () => {
+    const { form, isProfileEdited } = this.state;
+    // if (!isProfileEdited) return;
+
+    // if (!this.checkIfFieldsAreValid()) return;
 
     const postData = {
-      email: get(form, `email.value`),
-      password: get(form, `password.value`),
       firstName: get(form, `firstName.value`),
       lastName: get(form, `lastName.value`),
       age: get(form, `age.value`),
@@ -164,28 +151,25 @@ class SignupPage extends Component {
       profilePicture: get(form, `profilePicture.value`)
     };
 
-    await this.props.userSignupHandler(postData);
-    const { isUserSignedUp } = this.props;
-    console.log(isUserSignedUp, "ist the users");
-    if (isUserSignedUp) {
-      console.log("object");
-      this.props.history.push("/profile");
-    }
+    await this.props.updateUserDocument(postData, this.props.auth.uid);
   };
 
-  handleInputChange = (e, fieldIndex, fieldType) => {
-    let error;
-    if (fieldType !== "image") {
-      error = this.handleValidation(e.target.value, fieldType);
-    }
+  handleInputChange = (e, fieldIndex) => {
+    let error = this.handleValidation(e.target.value);
 
     let { form } = this.state;
-    form[fieldIndex].value = fieldType === "image" ? e : e.target.value;
+    form[fieldIndex].value = e.target.value;
     form[fieldIndex].error = error;
 
     this.setState({
-      form
+      form,
+      isProfileEdited: true
     });
+  };
+
+  onSignout = async () => {
+    await this.props.signoutUser();
+    this.props.history.push("/");
   };
 
   render() {
@@ -196,8 +180,8 @@ class SignupPage extends Component {
       ...this.props
     };
 
-    return <Signup {...stateMethodProps} />;
+    return <Profile {...stateMethodProps} />;
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SignupPage);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfilePage);

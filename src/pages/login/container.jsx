@@ -1,18 +1,21 @@
 import React, { Component } from "react";
+import { each, get } from "lodash";
+import { connect } from "react-redux";
+
+// components
 import Login from "./index";
 
+//utils
 import ValidationUtils from "utils/validationUtils";
 import UI_STRINGS from "utils/stringConstants";
 
-import { connect } from "react-redux";
-import { each, get } from "lodash";
 //services
 import { userLoginhandler } from "./services";
 
 const mapStateToProps = state => {
   const { RECEIVE_USER_FAILURE, RECEIVE_USER_SUCCESS, REQUEST_USER } = state;
-
   return {
+    ...state.firebase,
     ...RECEIVE_USER_FAILURE,
     ...RECEIVE_USER_SUCCESS,
     ...REQUEST_USER
@@ -50,8 +53,6 @@ class LoginPage extends Component {
       return UI_STRINGS.EMPTY_FIELD_ERROR_MESSAGE;
     } else if (ValidationUtils.checkIfWhiteSpace(value)) {
       return UI_STRINGS.WHITE_SPACE_ERROR_MESSAGE;
-    } else if (ValidationUtils.checkIfspecialChar(value)) {
-      return UI_STRINGS.SPECIAL_CHAR_ERROR_MESSAGE;
     }
 
     return null;
@@ -89,8 +90,6 @@ class LoginPage extends Component {
     const { userProfileDetails } = this.props;
 
     if (userProfileDetails) {
-      console.log(this.props, "are the props");
-
       this.props.history.push("/profile");
     }
   };

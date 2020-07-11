@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   ImageUploadWrapper,
   ImageInput,
@@ -7,9 +7,13 @@ import {
 } from "./styles";
 
 const ImageUpload = props => {
-  const { handleInputChange, fieldIndex } = props;
+  const { handleInputChange, fieldIndex, imageDetail } = props;
   const [imageFile, setImage] = useState(null);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState(null);
+  const [imagePreviewUrl, setImagePreviewUrl] = useState(imageDetail);
+
+  useEffect(() => {
+    setImagePreviewUrl(imageDetail);
+  }, []);
 
   const handleImageChange = e => {
     e.preventDefault();

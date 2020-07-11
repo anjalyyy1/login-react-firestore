@@ -22,8 +22,8 @@ import firebase from "firebase/app";
 import firebaseConfig from "config/firebaseConfig";
 
 const rrfConfig = {
-  // userProfile: "users",
-  useFirestoreForProfile: true, //include if using firestore
+  userProfile: "users",
+  useFirestoreForProfile: true, //include if using firestore so that profile is populated with user details
   attachAuthIsReady: true //include if using firebase auth
 };
 const reducerList = combineReducers(reducers);
@@ -48,7 +48,6 @@ const rrfProps = {
   createFirestoreInstance
 };
 
-// let persistor = persistStore(store);
 export default function configureStore() {
   return store;
 }
