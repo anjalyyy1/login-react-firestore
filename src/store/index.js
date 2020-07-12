@@ -1,16 +1,6 @@
 import { createStore, applyMiddleware, combineReducers } from "redux";
 import thunk from "redux-thunk";
 import reducers from "./reducers";
-// import { persistStore, persistReducer } from "redux-persist";
-// TODO: store to be added
-// import storage from "redux-persist/lib/storage";
-// const persistConfig = {
-//   key: "root",
-//   storage,
-//   whitelist: ["LAST_LOGGED_IN_TOOL"]
-// };
-// const persistedReducer = persistReducer(persistConfig, reducerList);
-
 import { compose } from "redux";
 import {
   reduxFirestore,
@@ -26,6 +16,7 @@ const rrfConfig = {
   useFirestoreForProfile: true, //include if using firestore so that profile is populated with user details
   attachAuthIsReady: true //include if using firebase auth
 };
+
 const reducerList = combineReducers(reducers);
 
 let store = createStore(
@@ -51,4 +42,5 @@ const rrfProps = {
 export default function configureStore() {
   return store;
 }
+
 export { store, rrfProps };

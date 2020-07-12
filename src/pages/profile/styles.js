@@ -2,18 +2,6 @@ import styled from "styled-components";
 
 export const InputWrapper = styled.div``;
 
-// export const PageWrapper = styled.div`
-//   width: 50%;
-//   margin: 0 auto;
-//   text-align: center;
-
-//   .image-upload {
-//     position: relative;
-//     right: 114px;
-//     top: -12px;
-//   }
-// `;
-
 export const PageWrapper = styled.div`
   width: 50%;
   margin: 0 auto;
@@ -25,8 +13,6 @@ export const PageWrapper = styled.div`
     top: -12px;
   }
 `;
-
-export const FormWrapper = styled.div``;
 
 export const Heading = styled.div`
   ${props => props.theme.SNIPPETS.HEADING};

@@ -1,18 +1,19 @@
 import React, { Component } from "react";
-import Profile from "./index";
+import { connect } from "react-redux";
+import { each, get, isEqual } from "lodash";
 
+// utils
 import ValidationUtils from "utils/validationUtils";
 import UI_STRINGS from "utils/stringConstants";
 import { getKeyByValue } from "utils/getKeyByValue";
 
-import { connect } from "react-redux";
-import { each, get, isEqual } from "lodash";
+// components
+import Profile from "./index";
+
 //services
-import { updateUserDocument, signoutUser } from "./services";
+import { updateUserDocument, signoutUser } from "./ducks";
 
 const mapStateToProps = state => {
-  console.log(state, "state form stae");
-
   const { RECEIVE_SIGNUP_SUCCESS, firebase, REQUEST_USER } = state;
   return {
     ...firebase,
@@ -46,7 +47,6 @@ class ProfilePage extends Component {
         value: "",
         error: "",
         label: "Last Name",
-        fieldType: "input",
         type: "text",
         fieldType: "input"
       },
@@ -104,8 +104,6 @@ class ProfilePage extends Component {
    * @returns {String} appropriate error message
    */
   handleValidation = (value, fieldType, field) => {
-    const { form } = this.state;
-
     if (ValidationUtils.checkIfEmptyField(value)) {
       return UI_STRINGS.EMPTY_FIELD_ERROR_MESSAGE;
     } else if (
@@ -160,6 +158,8 @@ class ProfilePage extends Component {
     const { form, isProfileEdited } = this.state;
     if (!isProfileEdited) return;
 
+    // donot update if there are any errors
+
     if (!this.checkIfFieldsAreValid()) return;
 
     const postData = {
@@ -170,8 +170,6 @@ class ProfilePage extends Component {
       address: get(form, `address.value`),
       profilePicture: get(form, `profilePicture.value`)
     };
-
-    console.log(postData);
 
     this.props.updateUserDocument(postData, this.props.auth.uid);
   };

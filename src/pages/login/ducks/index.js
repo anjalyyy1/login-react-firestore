@@ -2,11 +2,7 @@ import { get } from "lodash";
 import ToastUtils from "utils/handleToast";
 
 // import actions
-import {
-  onUserLoginSuccess,
-  isUserLoading,
-  onUserLoginFailure
-} from "./actions";
+import { onUserLoginSuccess, isUserLoading } from "./actions";
 
 // user login handler
 const userLoginhandler = (email, password) => async (
@@ -15,7 +11,6 @@ const userLoginhandler = (email, password) => async (
   { getFirebase }
 ) => {
   const firebase = getFirebase();
-
   dispatch(
     isUserLoading({
       isUserLoading: true
@@ -33,13 +28,11 @@ const userLoginhandler = (email, password) => async (
       })
     );
 
-    // if (response.user) {
     dispatch(
       onUserLoginSuccess({
-        userProfileDetails: response.user
+        userProfileDetails: get(response, `user`)
       })
     );
-    // }
   } catch (err) {
     dispatch(
       isUserLoading({

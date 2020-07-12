@@ -1,7 +1,7 @@
 //reducers
-import loginReducer from "pages/login/services/reducer";
-import signupReducer from "pages/signup/services/reducer";
-import profileReducer from "pages/profile/services/reducer";
+import loginReducer from "pages/login/ducks/reducer";
+import signupReducer from "pages/signup/ducks/reducer";
+import profileReducer from "pages/profile/ducks/reducer";
 
 import { firestoreReducer } from "redux-firestore"; // store synching
 //authentication synching synching
@@ -14,8 +14,5 @@ const allReducers = {
   firestore: firestoreReducer,
   firebase: firebaseReducer
 };
-
-// const rootReducer = combineReducers({
-// });
 
 export default allReducers;

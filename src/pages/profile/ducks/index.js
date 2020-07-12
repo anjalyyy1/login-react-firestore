@@ -1,8 +1,8 @@
-import { get, update } from "lodash";
+import { get } from "lodash";
 import ToastUtils from "utils/handleToast";
 
 // import actions
-import { onUserUpdate, isUserLoading, onUserUpdateFailure } from "./actions";
+import { isUserLoading, onUserUpdateFailure } from "./actions";
 
 import { storage } from "config/firebaseConfig";
 
@@ -19,7 +19,7 @@ const updateUserDocument = (updatedUser, userId) => async (
 
   let imageUrl;
 
-  // if profile picture was edited
+  // if profile picture was edited get a new download url
   if (typeof updatedUser.profilePicture === "object") {
     try {
       const uploadedImage = await storage
@@ -41,6 +41,7 @@ const updateUserDocument = (updatedUser, userId) => async (
     }
   }
 
+  // if new image was generated use the new image store the new image url or else the old one
   let postData = {
     ...updatedUser,
     profilePicture:
@@ -86,10 +87,12 @@ const signoutUser = () => async (dispatch, getState, { getFirebase }) => {
   const firebase = getFirebase();
 
   try {
-    const response = await firebase.auth().signOut();
-    console.log(response, "success sign out");
+    await firebase.auth().signOut();
   } catch (err) {
-    console.log("lll", err);
+    ToastUtils.handleToast({
+      operation: "error",
+      message: "Error signing out.."
+    });
   }
 };
 

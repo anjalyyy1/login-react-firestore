@@ -1,4 +1,5 @@
-import { get } from "lodash";
+import ToastUtils from "utils/handleToast";
+import { storage } from "config/firebaseConfig";
 
 // import actions
 import {
@@ -6,8 +7,7 @@ import {
   isUserLoading,
   onUserSignupFailure
 } from "./actions";
-
-import { storage } from "config/firebaseConfig";
+import { get } from "lodash";
 
 // user login handler
 const userSignupHandler = newUser => async (
@@ -29,6 +29,7 @@ const userSignupHandler = newUser => async (
       .auth()
       .createUserWithEmailAndPassword(newUser.email, newUser.password);
 
+    // get the image url for the image
     const uploadedImage = await storage
       .ref(`/images/${newUser.profilePicture.name}`)
       .put(newUser.profilePicture);
@@ -38,30 +39,36 @@ const userSignupHandler = newUser => async (
       .child(uploadedImage.metadata.name)
       .getDownloadURL();
 
-    const signedUpUser = await firestore
-      .collection("users")
-      .doc(response.user.uid)
-      .set({
-        email: newUser.email,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        age: newUser.age,
-        phoneNumber: newUser.phoneNumber,
-        address: newUser.address,
-        profilePicture: imageUrl
-      });
+    await firestore.collection("users").doc(response.user.uid).set({
+      email: newUser.email,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+      age: newUser.age,
+      phoneNumber: newUser.phoneNumber,
+      address: newUser.address,
+      profilePicture: imageUrl
+    });
 
     dispatch(
       onUserSignupSuccess({
         isUserSignedUp: true
       })
     );
+
+    ToastUtils.handleToast({
+      operation: "success",
+      message: "Account created successfully. Welcome!!"
+    });
   } catch (err) {
     dispatch(
       onUserSignupFailure({
         signupError: err
       })
     );
+    ToastUtils.handleToast({
+      operation: "error",
+      message: get(err, "message") || "Something went wrong."
+    });
   }
 
   dispatch(
@@ -72,13 +79,3 @@ const userSignupHandler = newUser => async (
 };
 
 export { userSignupHandler };
-
-// const uploadTask = await firestorage
-//       .ref(`/images/${profileImage.name}`)
-//       .put(profileImage.value);
-
-//     imageUrl = await firestorage
-//       .ref("images")
-//       .child(uploadTask.metadata.name)
-//       .getDownloadURL();
-// storage.child(`images/${newUser.profilePicture.name}`).put(newUser.profilePicture.value)

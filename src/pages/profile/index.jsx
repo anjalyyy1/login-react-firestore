@@ -13,7 +13,6 @@ import FullPageLoader from "components/fullPageLoader";
 import {
   InputWrapper,
   PageWrapper,
-  FormWrapper,
   Heading,
   LogoutButtonWrapper
 } from "./styles";

@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import Signup from "./index";
-import { get, each, isEqual } from "lodash";
+import { get, each } from "lodash";
 
 import ValidationUtils from "utils/validationUtils";
 import UI_STRINGS from "utils/stringConstants";
 import { connect } from "react-redux";
-import { userSignupHandler } from "./services";
+import { userSignupHandler } from "./ducks";
 import ToastUtils from "utils/handleToast";
 
 const mapStateToProps = state => {
@@ -50,7 +50,6 @@ class SignupPage extends Component {
         error: "",
         className: "halfWidth marginLeft",
         label: "Last Name",
-        fieldType: "input",
         type: "text",
         fieldType: "input"
       },
@@ -103,12 +102,6 @@ class SignupPage extends Component {
     }
   };
 
-  componentDidMount() {
-    if (localStorage.getItem("isUserLoggedIn")) {
-      this.props.history.push("/profile");
-    }
-  }
-
   /**
    *handle validation for form fields
    * @returns {String} appropriate error message
@@ -155,6 +148,12 @@ class SignupPage extends Component {
 
     return null;
   };
+
+  componentDidMount() {
+    if (localStorage.getItem("isUserLoggedIn")) {
+      this.props.history.push("/profile");
+    }
+  }
 
   /**
    * check if form fields are valid or not
@@ -205,9 +204,7 @@ class SignupPage extends Component {
 
     await this.props.userSignupHandler(postData);
     const { isUserSignedUp } = this.props;
-    console.log(isUserSignedUp, "ist the users");
     if (isUserSignedUp) {
-      console.log("object");
       localStorage.setItem("isUserLoggedIn", true);
       this.props.history.push("/profile");
     }

@@ -16,7 +16,6 @@ import ToastUtils from "utils/handleToast";
 
 const ImageUpload = props => {
   const { handleInputChange, fieldIndex, imageDetail, error } = props;
-  const [imageFile, setImage] = useState(null);
   const [imagePreviewUrl, setImagePreviewUrl] = useState(imageDetail);
 
   useEffect(() => {
@@ -40,7 +39,6 @@ const ImageUpload = props => {
     }
 
     reader.onloadend = () => {
-      setImage(file);
       setImagePreviewUrl(reader.result);
       handleInputChange(file, fieldIndex, "image");
     };

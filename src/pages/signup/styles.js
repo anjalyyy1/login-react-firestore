@@ -60,8 +60,6 @@ export const SignupImageWrapper = styled.div`
 
 export const SignupImage = styled.img``;
 
-export const Fields = styled.div``;
-
 export const SignupWrapper = styled.div`
   display: flex;
   justify-content: space-between;

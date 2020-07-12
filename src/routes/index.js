@@ -5,14 +5,14 @@ import {
   Switch,
   Redirect
 } from "react-router-dom";
-import { connect } from "react-redux";
 
 //components
 import Login from "pages/login/container";
 import Signup from "pages/signup/container";
 import Profile from "pages/profile/container";
 
-const checkAuthSession = (Component, auth) => {
+// check for all the private routes except for the public routes(route guarding)
+const checkAuthSession = Component => {
   return localStorage.getItem("isUserLoggedIn") ? (
     Component
   ) : (
@@ -21,8 +21,6 @@ const checkAuthSession = (Component, auth) => {
 };
 
 const routes = props => {
-  let auth = props.auth;
-
   return (
     <Router>
       <Switch>
@@ -31,7 +29,7 @@ const routes = props => {
         <Route
           path="/profile"
           exact
-          render={props => checkAuthSession(<Profile {...props} />, auth)}
+          render={props => checkAuthSession(<Profile {...props} />)}
         />
         <Redirect to="/" />
       </Switch>
@@ -39,22 +37,4 @@ const routes = props => {
   );
 };
 
-const mapStatetoProps = state => {
-  const { firebase } = state;
-  return {
-    ...firebase
-  };
-};
-
-export default connect(mapStatetoProps)(routes);
-
-// const checkAuthSession = (Component, props, auth, isProtectedRoute = false) => {
-//   let checkIfUserLoggedIn = !auth.isEmpty; // user is logged in
-//   return checkIfUserLoggedIn ? (
-//     <Profile {...props} />
-//   ) : !isProtectedRoute ? (
-//     Component
-//   ) : (
-//     <Redirect to="/" />
-//   );
-// };
+export default routes;

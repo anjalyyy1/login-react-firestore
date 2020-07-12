@@ -9,6 +9,8 @@ import Button from "components/button";
 import BackgroundWrapper from "components/backgroundWrapper";
 import FullPageLoader from "components/fullPageLoader";
 import AppImages from "images";
+
+// styles
 import {
   LoginImage,
   LoginImageWrapper,

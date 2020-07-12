@@ -10,20 +10,16 @@ import ValidationUtils from "utils/validationUtils";
 import UI_STRINGS from "utils/stringConstants";
 
 //services
-import { userLoginhandler } from "./services";
+import { userLoginhandler } from "./ducks";
 
 const mapStateToProps = state => {
-  console.log(state, "poora store");
   const { RECEIVE_USER_FAILURE, RECEIVE_USER_SUCCESS, REQUEST_USER } = state;
 
-  let test = {
+  return {
     ...RECEIVE_USER_FAILURE,
     ...RECEIVE_USER_SUCCESS,
     ...REQUEST_USER
   };
-
-  console.log(test, "tets test");
-  return test;
 };
 
 const mapDispatchToProps = { userLoginhandler };
@@ -48,12 +44,6 @@ class LoginPage extends Component {
     }
   };
 
-  componentDidMount() {
-    if (localStorage.getItem("isUserLoggedIn")) {
-      this.props.history.push("/profile");
-    }
-  }
-
   /**
    *handle validation for form fields
    * @returns {String} appropriate error message
@@ -68,9 +58,15 @@ class LoginPage extends Component {
     return null;
   };
 
+  componentDidMount() {
+    if (localStorage.getItem("isUserLoggedIn")) {
+      this.props.history.push("/profile");
+    }
+  }
+
   /**
-   * check if form fields are valid or not
-   * @returns Boolean stating whether fields are valid or not
+   * check if all the form fields are valid or not
+   * @returns Boolean stating whether all fields are valid or not
    */
   checkIfFieldsAreValid = () => {
     let { form } = this.state;
@@ -101,10 +97,9 @@ class LoginPage extends Component {
 
     await this.props.userLoginhandler(email, password);
     const { userProfileDetails } = this.props;
-    console.log(this.props, "this are the props");
 
+    // if logged in successfully show the profile
     if (userProfileDetails) {
-      console.log("setting flag");
       localStorage.setItem("isUserLoggedIn", true);
       this.props.history.push("/profile");
     }

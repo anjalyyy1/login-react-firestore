@@ -12,12 +12,12 @@ const firebaseConfig = {
   messagingSenderId: "1014081323833",
   appId: "1:1014081323833:web:ef2351b60c939da390dee8"
 };
+
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
-firebase.firestore().settings({
-  timestampsInSnapshots: true
-});
+firebase.firestore().settings({});
 
+// get store
 const storage = firebase.storage();
 
 export { storage };
