@@ -8,6 +8,7 @@ import Button from "components/button";
 import BackgroundWrapper from "components/backgroundWrapper";
 import ImageUpload from "components/imageUpload";
 import AppImages from "images";
+import FullPageLoader from "components/fullPageLoader";
 
 //styles
 import {
@@ -24,10 +25,11 @@ import {
 } from "./styles";
 
 const Signup = props => {
-  let { form, handleInputChange, signupHandler } = props;
+  let { form, handleInputChange, signupHandler, isUserLoading } = props;
 
   return (
     <PageWrapper>
+      {isUserLoading && <FullPageLoader />}
       <Heading>Sign up</Heading>
       <SignupWrapper>
         <FormWrapper>
@@ -76,7 +78,7 @@ const Signup = props => {
             <SignupImage src={AppImages.SignupImage} />
           </SignupImageWrapper>
           <LoginLink>
-            <NavLink to="/">I am already a member</NavLink>
+            <NavLink to="/">Already have an account? Login here.</NavLink>
           </LoginLink>
         </ImageWrapper>
       </SignupWrapper>

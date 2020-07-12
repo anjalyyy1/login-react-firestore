@@ -34,9 +34,20 @@ class ValidationUtils {
   };
 
   validateImageFile = file => {
-    let regEx = /\.(jpeg|jpg|png|gif)$/i;
+    let regEx = /\.(jpeg|jpg|png|gif|svg)$/i;
 
     return file && regEx.test(file.name);
+  };
+
+  validatePassword = password => {
+    // Minimum eight characters, at least  one number:
+    let regex = /^(?=.*\d).{8,}$/;
+    return regex.test(password);
+  };
+
+  validateEmail = email => {
+    let re = /^([a-z0-9.\-_]+@[a-z0-9]+(\.[a-z]+)?\.[a-z]+)$/i;
+    return re.test(String(email).toLowerCase());
   };
 }
 

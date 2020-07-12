@@ -58,7 +58,7 @@ class LoginPage extends Component {
    *handle validation for form fields
    * @returns {String} appropriate error message
    */
-  handleValidation = value => {
+  handleValidation = (value, field) => {
     if (ValidationUtils.checkIfEmptyField(value)) {
       return UI_STRINGS.EMPTY_FIELD_ERROR_MESSAGE;
     } else if (ValidationUtils.checkIfWhiteSpace(value)) {
@@ -77,7 +77,10 @@ class LoginPage extends Component {
     let isFieldValid = true;
 
     each(form, eachField => {
-      eachField.error = this.handleValidation(get(eachField, `value`));
+      eachField.error = this.handleValidation(
+        get(eachField, `value`),
+        eachField
+      );
       if (eachField.error) {
         isFieldValid = false;
       }
@@ -107,8 +110,8 @@ class LoginPage extends Component {
     }
   };
 
-  handleInputChange = (e, fieldIndex) => {
-    let error = this.handleValidation(e.target.value);
+  handleInputChange = (e, fieldIndex, eachField) => {
+    let error = this.handleValidation(e.target.value, eachField);
 
     let { form } = this.state;
     form[fieldIndex].value = e.target.value;

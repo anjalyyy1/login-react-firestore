@@ -20,8 +20,10 @@ const ImageUpload = props => {
   const [imagePreviewUrl, setImagePreviewUrl] = useState(imageDetail);
 
   useEffect(() => {
-    setImagePreviewUrl(imageDetail);
-  }, []);
+    setImagePreviewUrl(
+      typeof imageDetail !== "object" ? imageDetail : imagePreviewUrl
+    );
+  }, [imageDetail]);
 
   const handleImageChange = e => {
     e.preventDefault();
@@ -36,7 +38,6 @@ const ImageUpload = props => {
       });
       return;
     }
-    // if (!file) return;
 
     reader.onloadend = () => {
       setImage(file);
@@ -49,7 +50,7 @@ const ImageUpload = props => {
 
   return (
     <>
-      <ImageUploadWrapper>
+      <ImageUploadWrapper className="image-upload">
         <ImageInput
           type="file"
           accept="image/*"

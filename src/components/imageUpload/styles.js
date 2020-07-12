@@ -14,6 +14,7 @@ export const ImagePreview = styled.img`
   display: block;
   max-width: 200px;
   max-height: 150px;
+  border: 6px solid #1398c4;
 `;
 
 export const ImagePreviewWrapper = styled.div`
@@ -28,6 +29,7 @@ export const DefaultImage = styled.img`
   width: 100%;
   height: auto;
   display: block;
+  border-radius: 50%;
 `;
 
 export const EditImage = styled.img`

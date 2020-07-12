@@ -11,10 +11,13 @@ import { each, get, isEqual } from "lodash";
 import { updateUserDocument, signoutUser } from "./services";
 
 const mapStateToProps = state => {
-  const { RECEIVE_SIGNUP_SUCCESS, firebase } = state;
+  console.log(state, "state form stae");
+
+  const { RECEIVE_SIGNUP_SUCCESS, firebase, REQUEST_USER } = state;
   return {
     ...firebase,
-    ...RECEIVE_SIGNUP_SUCCESS
+    ...RECEIVE_SIGNUP_SUCCESS,
+    ...REQUEST_USER
   };
 };
 
@@ -23,7 +26,15 @@ const mapDispatchToProps = { updateUserDocument, signoutUser };
 class ProfilePage extends Component {
   state = {
     isProfileEdited: false,
+    hideTopMargin: true,
     form: {
+      profilePicture: {
+        value: "",
+        error: "",
+        label: "Profile Picture",
+        type: "text",
+        fieldType: "image"
+      },
       firstName: {
         value: "",
         error: "",
@@ -59,13 +70,6 @@ class ProfilePage extends Component {
         label: "Address",
         type: "text",
         fieldType: "textarea"
-      },
-      profilePicture: {
-        value: "",
-        error: "",
-        label: "Profile Picture",
-        type: "text",
-        fieldType: "image"
       }
     }
   };
@@ -99,13 +103,28 @@ class ProfilePage extends Component {
    *handle validation for form fields
    * @returns {String} appropriate error message
    */
-  handleValidation = value => {
+  handleValidation = (value, fieldType, field) => {
+    const { form } = this.state;
+
     if (ValidationUtils.checkIfEmptyField(value)) {
       return UI_STRINGS.EMPTY_FIELD_ERROR_MESSAGE;
-    } else if (ValidationUtils.checkIfWhiteSpace(value)) {
+    } else if (
+      ValidationUtils.checkIfWhiteSpace(value) &&
+      fieldType !== "image"
+    ) {
       return UI_STRINGS.WHITE_SPACE_ERROR_MESSAGE;
-    } else if (ValidationUtils.checkIfspecialChar(value)) {
-      return UI_STRINGS.SPECIAL_CHAR_ERROR_MESSAGE;
+    } else if (
+      get(field, `label`) === "Phone Number" &&
+      !ValidationUtils.validateContactNumber(value) &&
+      fieldType !== "image"
+    ) {
+      return UI_STRINGS.VALID_CONTACT_NUMBER;
+    } else if (
+      get(field, `label`) === "Age" &&
+      !ValidationUtils.validateNumber(value) &&
+      fieldType !== "image"
+    ) {
+      return UI_STRINGS.VALID_NUMBER;
     }
 
     return null;
@@ -120,7 +139,11 @@ class ProfilePage extends Component {
     let isFieldValid = true;
 
     each(form, eachField => {
-      eachField.error = this.handleValidation(get(eachField, `value`));
+      eachField.error = this.handleValidation(
+        get(eachField, `value`),
+        get(eachField, `fieldType`),
+        eachField
+      );
       if (eachField.error) {
         isFieldValid = false;
       }
@@ -135,9 +158,9 @@ class ProfilePage extends Component {
 
   updateProfileHandler = async () => {
     const { form, isProfileEdited } = this.state;
-    // if (!isProfileEdited) return;
+    if (!isProfileEdited) return;
 
-    // if (!this.checkIfFieldsAreValid()) return;
+    if (!this.checkIfFieldsAreValid()) return;
 
     const postData = {
       firstName: get(form, `firstName.value`),
@@ -148,14 +171,19 @@ class ProfilePage extends Component {
       profilePicture: get(form, `profilePicture.value`)
     };
 
-    await this.props.updateUserDocument(postData, this.props.auth.uid);
+    console.log(postData);
+
+    this.props.updateUserDocument(postData, this.props.auth.uid);
   };
 
-  handleInputChange = (e, fieldIndex) => {
-    let error = this.handleValidation(e.target.value);
+  handleInputChange = (e, fieldIndex, fieldType, eachField) => {
+    let error;
+    if (fieldType !== "image") {
+      error = this.handleValidation(e.target.value, fieldType, eachField);
+    }
 
     let { form } = this.state;
-    form[fieldIndex].value = e.target.value;
+    form[fieldIndex].value = fieldType === "image" ? e : e.target.value;
     form[fieldIndex].error = error;
 
     this.setState({

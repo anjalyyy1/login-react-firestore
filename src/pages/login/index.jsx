@@ -40,7 +40,7 @@ const Login = props => {
                 value={get(eachField, `value`)}
                 width="100%"
                 error={get(eachField, `error`)}
-                handleInputChange={e => handleInputChange(e, index)}
+                handleInputChange={e => handleInputChange(e, index, eachField)}
                 type={get(eachField, `type`)}
                 fieldType={get(eachField, `fieldType`)}
               />

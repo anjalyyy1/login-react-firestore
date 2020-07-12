@@ -6,6 +6,7 @@ import ValidationUtils from "utils/validationUtils";
 import UI_STRINGS from "utils/stringConstants";
 import { connect } from "react-redux";
 import { userSignupHandler } from "./services";
+import ToastUtils from "utils/handleToast";
 
 const mapStateToProps = state => {
   const {
@@ -115,7 +116,6 @@ class SignupPage extends Component {
   handleValidation = (value, fieldType, field) => {
     const { form } = this.state;
 
-    console.log(fieldType, "fieldType");
     if (ValidationUtils.checkIfEmptyField(value)) {
       return UI_STRINGS.EMPTY_FIELD_ERROR_MESSAGE;
     } else if (
@@ -141,6 +141,16 @@ class SignupPage extends Component {
       fieldType !== "image"
     ) {
       return UI_STRINGS.PASSWORD_CONFIRM_PASSWORD_MATCH_ERROR;
+    } else if (
+      get(field, `label`) === "Password" &&
+      !ValidationUtils.validatePassword(value)
+    ) {
+      return UI_STRINGS.VALID_PASSWORD;
+    } else if (
+      get(field, `label`) === "Enter email" &&
+      !ValidationUtils.validateEmail(value)
+    ) {
+      return UI_STRINGS.VALID_EMAIL;
     }
 
     return null;
@@ -173,7 +183,13 @@ class SignupPage extends Component {
   };
 
   signupHandler = async () => {
-    if (!this.checkIfFieldsAreValid()) return;
+    if (!this.checkIfFieldsAreValid()) {
+      ToastUtils.handleToast({
+        operation: "error",
+        message: "Please enter valid details."
+      });
+      return;
+    }
     const { form } = this.state;
 
     const postData = {
@@ -187,15 +203,14 @@ class SignupPage extends Component {
       profilePicture: get(form, `profilePicture.value`)
     };
 
-    console.log(postData);
-
-    // await this.props.userSignupHandler(postData);
-    // const { isUserSignedUp } = this.props;
-    // console.log(isUserSignedUp, "ist the users");
-    // if (isUserSignedUp) {
-    //   console.log("object");
-    //   this.props.history.push("/profile");
-    // }
+    await this.props.userSignupHandler(postData);
+    const { isUserSignedUp } = this.props;
+    console.log(isUserSignedUp, "ist the users");
+    if (isUserSignedUp) {
+      console.log("object");
+      localStorage.setItem("isUserLoggedIn", true);
+      this.props.history.push("/profile");
+    }
   };
 
   handleInputChange = (e, fieldIndex, fieldType, eachField) => {

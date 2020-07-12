@@ -1,22 +1,71 @@
-import { get } from "lodash";
+import { get, update } from "lodash";
+import ToastUtils from "utils/handleToast";
 
 // import actions
 import { onUserUpdate, isUserLoading, onUserUpdateFailure } from "./actions";
+
+import { storage } from "config/firebaseConfig";
 
 const updateUserDocument = (updatedUser, userId) => async (
   dispatch,
   getState,
   { getFirebase, getFirestore }
 ) => {
-  console.log(updatedUser, userId, "from services");
+  dispatch(
+    isUserLoading({
+      isUserLoading: true
+    })
+  );
+
+  let imageUrl;
+
+  // if profile picture was edited
+  if (typeof updatedUser.profilePicture === "object") {
+    try {
+      const uploadedImage = await storage
+        .ref(`/images/${updatedUser.profilePicture.name}`)
+        .put(updatedUser.profilePicture);
+
+      imageUrl = await storage
+        .ref("images")
+        .child(uploadedImage.metadata.name)
+        .getDownloadURL();
+    } catch (err) {
+      dispatch(
+        isUserLoading({
+          isUserLoading: false
+        })
+      );
+
+      return;
+    }
+  }
+
+  let postData = {
+    ...updatedUser,
+    profilePicture:
+      typeof updatedUser.profilePicture === "object"
+        ? imageUrl
+        : get(updatedUser, `profilePicture`)
+  };
+
   const firestore = getFirestore();
   const userRef = firestore.doc(`users/${userId}`);
   const snapshot = await userRef.get();
-  console.log({ snapshot }, "snap shot");
+  dispatch(
+    isUserLoading({
+      isUserLoading: false
+    })
+  );
   if (snapshot.exists) {
     try {
       await userRef.update({
-        ...updatedUser
+        ...postData
+      });
+
+      ToastUtils.handleToast({
+        operation: "success",
+        message: "Your details updated successfully."
       });
     } catch (error) {
       dispatch(
@@ -24,9 +73,13 @@ const updateUserDocument = (updatedUser, userId) => async (
           userUpdateError: error
         })
       );
+
+      ToastUtils.handleToast({
+        operation: "error",
+        message: "Error updating details. Please try again later."
+      });
     }
   }
-  // return getUserDocument(user.uid);
 };
 
 const signoutUser = () => async (dispatch, getState, { getFirebase }) => {

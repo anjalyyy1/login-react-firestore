@@ -1,12 +1,22 @@
 import React from "react";
 import { map, get } from "lodash";
-import styled from "styled-components";
 
-// components
+// components
 import InputField from "components/inputfield";
 import Button from "components/button";
 import BackgroundWrapper from "components/backgroundWrapper";
 import ImageUpload from "components/imageUpload";
+import FullPageLoader from "components/fullPageLoader";
+
+//styles
+
+import {
+  InputWrapper,
+  PageWrapper,
+  FormWrapper,
+  Heading,
+  LogoutButtonWrapper
+} from "./styles";
 
 const Profile = props => {
   let {
@@ -14,11 +24,18 @@ const Profile = props => {
     handleInputChange,
     updateProfileHandler,
     isProfileEdited,
-    onSignout
+    onSignout,
+    auth,
+    isUserLoading
   } = props;
 
   return (
     <PageWrapper>
+      {(auth.isEmpty || isUserLoading) && <FullPageLoader />}
+      <Heading>Welcome !</Heading>
+      <LogoutButtonWrapper>
+        <Button label="Logout" width="50%" onClickHandler={onSignout} />
+      </LogoutButtonWrapper>
       {map(form, (eachField, index) => {
         const formField = (
           <div key={index}>
@@ -30,7 +47,14 @@ const Profile = props => {
                   value={get(eachField, `value`, "")}
                   width="100%"
                   error={get(eachField, `error`)}
-                  handleInputChange={e => handleInputChange(e, index)}
+                  handleInputChange={e =>
+                    handleInputChange(
+                      e,
+                      index,
+                      get(eachField, `fieldType`),
+                      eachField
+                    )
+                  }
                   type={get(eachField, `type`)}
                   fieldType={get(eachField, `fieldType`)}
                 />
@@ -53,21 +77,10 @@ const Profile = props => {
         label="Update"
         width="50%"
         onClickHandler={updateProfileHandler}
-        // disabled={isProfileEdited}
+        disabled={!isProfileEdited}
       />
-      <Button label="Logout" width="50%" onClickHandler={onSignout} />
     </PageWrapper>
   );
 };
-
-const InputWrapper = styled.div``;
-
-const PageWrapper = styled.div`
-  width: 50%;
-  margin: 0 auto;
-  text-align: center;
-`;
-
-const FormWrapper = styled.div``;
 
 export default BackgroundWrapper(Profile);
