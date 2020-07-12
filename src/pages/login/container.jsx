@@ -16,6 +16,7 @@ const mapStateToProps = state => {
   const { RECEIVE_USER_FAILURE, RECEIVE_USER_SUCCESS, REQUEST_USER } = state;
 
   return {
+    ...state.firebase,
     ...RECEIVE_USER_FAILURE,
     ...RECEIVE_USER_SUCCESS,
     ...REQUEST_USER
@@ -96,10 +97,10 @@ class LoginPage extends Component {
     const password = get(form, `password.value`);
 
     await this.props.userLoginhandler(email, password);
-    const { userProfileDetails } = this.props;
+    const { auth } = this.props;
 
     // if logged in successfully show the profile
-    if (userProfileDetails) {
+    if (!auth.isEmpty) {
       localStorage.setItem("isUserLoggedIn", true);
       this.props.history.push("/profile");
     }

@@ -171,7 +171,11 @@ class ProfilePage extends Component {
       profilePicture: get(form, `profilePicture.value`)
     };
 
-    this.props.updateUserDocument(postData, this.props.auth.uid);
+    await this.props.updateUserDocument(postData, this.props.auth.uid);
+
+    this.setState({
+      isProfileEdited: false
+    });
   };
 
   handleInputChange = (e, fieldIndex, fieldType, eachField) => {

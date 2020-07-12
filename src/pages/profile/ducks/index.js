@@ -91,7 +91,7 @@ const signoutUser = () => async (dispatch, getState, { getFirebase }) => {
   } catch (err) {
     ToastUtils.handleToast({
       operation: "error",
-      message: "Error signing out.."
+      message: "Error signing out."
     });
   }
 };

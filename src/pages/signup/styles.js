@@ -14,7 +14,7 @@ export const InputWrapper = styled.span``;
 
 export const PageWrapper = styled.div`
   width: 100%;
-  margin: 0 auto;
+  margin: 0 auto 100px;
   font-family: "Roboto", sans-serif;
 
   .halfWidth {
