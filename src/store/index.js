@@ -9,7 +9,7 @@ import {
 } from "redux-firestore";
 import { getFirebase } from "react-redux-firebase";
 import firebase from "firebase/app";
-import firebaseConfig from "config/firebaseConfig";
+import firebaseConfig from "../config/firebaseConfig";
 
 const rrfConfig = {
   userProfile: "users",
